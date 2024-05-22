@@ -5,15 +5,16 @@
  * Listing 15.9 (p. 224)
  */
 const mongoose = require("mongoose"),
-  Subscriber = require("../models/subscriber");
+  Subscriber = require("../models/Subscriber");
 
 // 데이터베이스 연결 설정
-mongoose.connect("mongodb://127.0.0.1:27017/ut-nodejs", {
-  useNewUrlParser: true,
-});
-
-mongoose.connection;
-
+mongoose.connect(
+  "mongodb+srv://user:XAKChOtj4OIqYKyQ@ut-node.z2zjfig.mongodb.net/?retryWrites=true&w=majority&appName=ut-node"
+)
+const db= mongoose.connection;
+db.once("open",()=>{
+  console.log("Connected to MONGODB!!");
+})
 var subscribers = [
   {
     name: "Yoo Jae-suk",
@@ -150,4 +151,4 @@ setTimeout(() => {
     .catch((error) => {
       console.log(`Error: ${error}`);
     });
-}, 500);
+}, 1500);

@@ -21,9 +21,16 @@
           </tr>
         </thead>
         <tbody>
-          <!-- 
-            @TODO: 뷰에서 사용자 배열 루핑 탐색 
-          -->
+          <% users.forEcah(user =>{ %>
+          <tr>
+            <td><%= u.fullName %></td>
+            <td><%= u.email %></td>
+            <td>
+              <a href="users/<%= user.id %>/edit"/>
+              <a href="users/<%= user.id %>/delete"/>
+            </td>
+          </tr>
+          <% }); %>
         </tbody>
       </table>
 
