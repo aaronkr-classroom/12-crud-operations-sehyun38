@@ -40,6 +40,40 @@ module.exports = {
   /**
    * @TODO: new, create, redirectView 액션을 객체 리터럴로 묶어 익스포트
    */
+  new: (req, res) => {
+    res.render("users/new");
+  },
+
+  // 사용자를 데이터베이스에 저장하기 위한 create 액션 추가
+  create: (req, res, next) => {
+    let userParams = {
+      name: {
+        first: req.body.first,
+        last: req.body.last,
+      },
+      email: req.body.email,
+      username: req.body.username,
+      password: req.body.password,
+      profileImg: req.body.profileImg,
+    };
+    User.create(userParams)
+      .then((user) => {
+        res.locals.redirect = "/users";
+        res.locals.user = user;
+        next();
+      })
+      .catch((error) => {
+        console.log(`Error saving user: ${error.message}`);
+        next(error);
+      });
+  },
+
+  // 분리된 redirectView 액션에서 뷰 렌더링
+  redirectView: (req, res, next) => {
+    let redirectPath = res.locals.redirect;
+    if (redirectPath) res.redirect(redirectPath);
+    else next();
+  },
 
   /**
    * 노트: 구독자 컨트롤러에 new와 create 액션을 추가하는 것은 새로운 CRUD 액션을 맞춰
@@ -54,4 +88,21 @@ module.exports = {
   /**
    * @TODO: show, showView 액션을 객체 리터럴로 묶어 익스포트
    */
+  show: (req, res, next) => {
+    let userId = req.params.id; // request params로부터 사용자 ID 수집
+    User.findById(userId) // ID로 사용자 찾기
+      .then((user) => {
+        res.locals.user = user; // 응답 객체를 통해 다음 믿들웨어 함수로 사용자 전달
+        next();
+      })
+      .catch((error) => {
+        console.log(`Error fetching user by ID: ${error.message}`);
+        next(error); // 에러를 로깅하고 다음 함수로 전달
+      });
+  },
+
+  // show 뷰의 렌더링
+  showView: (req, res) => {
+    res.render("users/show");
+  }
 };

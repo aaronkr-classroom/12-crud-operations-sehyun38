@@ -83,6 +83,24 @@ module.exports = mongoose.model("User", userSchema);
 /**
  * @TODO: pre("save") 훅 설정
  */
+userSchema.pre("save", function (next) {
+  let user = this; // 콜백에서 함수 키워드 사용
+  if (user.subscribedAccount == undefined) {
+    Subscriber.findOne({
+      email: user.email,
+    })
+      .then((subscriber) => {
+        user.subscribedAccount = subscriber; // 사용자와 구독자 계정 연결
+        next();
+      })
+      .catch((error) => {
+        console.log(`Error in connecting subscriber: ${error.message}`);
+        next(error); 
+      });
+  } else {
+    next(); 
+  }
+});
 
 module.exports = mongoose.model("User", userSchema);
 
